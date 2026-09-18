@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이제 부터 마왕성!</title>
+    <style>
+        :root {
+            --bg-color: #08040a;
+            --panel-bg: rgba(19, 10, 28, 0.85);
+            --card-bg: rgba(28, 16, 43, 0.85);
+            --border-color: #381952;
+            --glow-red: #ff0055;
+            --glow-purple: #9d00ff;
+            --text-main: #e8dff5;
+            --text-muted: #8c7b9e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(to bottom, rgba(8, 4, 10, 0.75), rgba(8, 4, 10, 0.88)),
+                url('https://raw.githubusercontent.com/hjs07240411-design/4X/refs/heads/main/X-11.jpg');
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Page Display Logic */
+        .page {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        header {
+            width: 100%;
+            padding: 3.5rem 1rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(20, 5, 30, 0.95) 0%, rgba(8, 4, 10, 0) 100%);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(157, 0, 255, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 20%, #ff66a3 60%, #c055ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 85, 0.6)) drop-shadow(0 0 35px rgba(157, 0, 255, 0.8));
+            margin-bottom: 0.6rem;
+            word-break: keep-all;
+        }
+
+        .subtitle {
+            color: #c9b0e8;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            font-weight: 500;
+            text-shadow: 0 0 8px rgba(157, 0, 255, 0.5);
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 2.5rem 1.5rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 4px solid var(--glow-red);
+            text-shadow: 0 0 8px var(--glow-red);
+        }
+
+        /* Character Grid */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .char-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+        }
+
+        .char-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--glow-purple);
+            box-shadow: 0 8px 25px rgba(157, 0, 255, 0.4), 0 0 15px rgba(255, 0, 85, 0.2);
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+            background-color: #0a0510;
+        }
+
+        .char-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: transform 0.4s ease;
+        }
+
+        .char-card:hover .char-img {
+            transform: scale(1.05);
+        }
+
+        .char-info {
+            width: 100%;
+            padding: 1.2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(18, 9, 28, 0.95) 100%);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .char-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+            letter-spacing: 1px;
+        }
+
+        .click-hint {
+            font-size: 0.8rem;
+            color: var(--glow-red);
+            opacity: 0.8;
+        }
+
+        /* Information Banner */
+        .info-box {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            margin-bottom: 3.5rem;
+        }
+
+        .info-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Roadmap Steps Area */
+        .roadmap-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+            margin-bottom: 3.5rem;
+        }
+
+        .step-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            position: relative;
+        }
+
+        .step-card:hover {
+            border-color: var(--glow-red);
+            transform: translateX(6px);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--glow-red), var(--glow-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px var(--glow-purple);
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.2rem;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .step-icon {
+            font-size: 1.8rem;
+            opacity: 0.8;
+        }
+
+        /* Seamless Continuous Prologue Viewer */
+        .prologue-viewer {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .prologue-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Character Detail Page Styles */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--glow-red);
+            background-color: rgba(56, 25, 82, 0.6);
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.4);
+            transform: translateX(-4px);
+        }
+
+        .detail-wrapper {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .detail-left {
+            width: 100%;
+        }
+
+        .detail-img-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.2);
+        }
+
+        .detail-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .detail-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .detail-title {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 0 10px var(--glow-purple);
+        }
+
+        .profile-table {
+            width: 100%;
+            margin-bottom: 2rem;
+            border-collapse: collapse;
+        }
+
+        .profile-table tr {
+            border-bottom: 1px solid rgba(56, 25, 82, 0.4);
+        }
+
+        .profile-table th {
+            text-align: left;
+            padding: 0.7rem 0;
+            width: 90px;
+            color: var(--glow-red);
+            font-weight: 600;
+        }
+
+        .profile-table td {
+            padding: 0.7rem 0;
+            color: var(--text-main);
+        }
+
+        .info-section {
+            margin-bottom: 1rem;
+        }
+
+        .info-section-title {
+            font-size: 1.15rem;
+            color: var(--glow-purple);
+            margin-bottom: 0.8rem;
+            font-weight: bold;
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            color: var(--text-muted);
+            font-size: 1rem;
+            white-space: pre-line;
+        }
+
+        /* 임팩트 있고 커진 소리치는 대사 박스 */
+        .shout-box {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(40, 15, 55, 0.95) 0%, rgba(20, 8, 30, 0.95) 100%);
+            border: 2px solid var(--glow-red);
+            border-radius: 12px;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.4), inset 0 0 20px rgba(157, 0, 255, 0.25);
+            margin-top: 0.5rem;
+        }
+
+        .shout-text {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 12px var(--glow-red), 0 0 25px var(--glow-purple);
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 850px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .detail-layout {
+                grid-template-columns: 1fr;
+            }
+            .shout-text {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>이제 부터 마왕성!</h1>
+        <div class="subtitle">우리들의 마왕성 건립 계획</div>
+    </header>
+
+    <!-- 메인 페이지 -->
+    <div id="main-page" class="page active">
+        <div class="container">
+            <h2 class="section-title">주요 구성원</h2>
+            
+            <div class="character-grid">
+                <!-- 고스 -->
+                <div class="char-card" onclick="showPage('goth-page')">
+                    <div class="img-wrapper">
+                        <img src="https://raw.githubusercontent.com/hjs07240411-design/10J/refs/heads/main/J-1.jpg" alt="고스" class="char-img">
+                    </div>
+                    <div class="char-info">
+                        <div class="char-name">고스</div>
+                        <div class="click-hint">클릭하여 상세 정보 보기</div>
+                    </div>
+                </div>
+
+                <!-- 엔지 -->
+                <div class="char-card" onclick="showPage('angie-page')">
+                    <div class="img-wrapper">
+                        <img src="https://raw.githubusercontent.com/hjs07240411-design/10C/refs/heads/main/C-4.jpg" alt="엔지" class="char-img">
+                    </div>
+                    <div class="char-info">
+                        <div class="char-name">엔지</div>
+                        <div class="click-hint">클릭하여 상세 정보 보기</div>
+                    </div>
+                </div>
+
+                <!-- 이사벨 -->
+                <div class="char-card" onclick="showPage('isabelle-page')">
+                    <div class="img-wrapper">
+                        <img src="https://raw.githubusercontent.com/hjs07240411-design/10E/refs/heads/main/E-4.jpg" alt="이사벨" class="char-img">
+                    </div>
+                    <div class="char-info">
+                        <div class="char-name">이사벨</div>
+                        <div class="click-hint">클릭하여 상세 정보 보기</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">왜 하필 내 집인데?!</h2>
+            <div class="info-box">
+                <p>입지 조건(지하철역, 가림막, 대형 마트 인접)을 전부 만족하는 그야말로 마왕성의 시발점!</p>
+            </div>
+
+            <h2 class="section-title">~ 마왕성 건립 계획 ~</h2>
+            <div class="roadmap-container">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <div class="step-title">마물 찾기</div>
+                        <div class="step-desc">마왕성 건립을 위해 두발 뛰어 마물들을 탐색하는 것이다!</div>
+                    </div>
+                    <div class="step-icon">🔍</div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <div class="step-title">마왕군 영입!</div>
+                        <div class="step-desc">발견한 마물들을 마왕성의 핵심 전력으로 만드는 것이다!</div>
+                    </div>
+                    <div class="step-icon">🤝</div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <div class="step-title">마물 만들기</div>
+                        <div class="step-desc">새로운 마물을 잔뜩 잔뜩 만들어 보는 것이다!</div>
+                    </div>
+                    <div class="step-icon">❤️</div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <div class="step-title">마왕 결정</div>
+                        <div class="step-desc">마왕이될 건 당연히 이몸! 이사벨인게 당연한 것이다!</div>
+                    </div>
+                    <div class="step-icon">👑</div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">05</div>
+                    <div class="step-content">
+                        <div class="step-title">놀고 먹기</div>
+                        <div class="step-desc">목표를 이뤘으면 나머지는 부하들에게 떠넘기고 이제 빈둥빈둥 라이프를 즐겨야지!</div>
+                    </div>
+                    <div class="step-icon">🍕</div>
+                </div>
+            </div>
+
+            <!-- 연속 웹툰 형태의 프롤로그 영역 -->
+            <h2 class="section-title">📖 프롤로그</h2>
+            <div class="prologue-viewer">
+                <img src="https://raw.githubusercontent.com/hjs07240411-design/10I/refs/heads/main/I-1.jpg" alt="프롤로그 1" class="prologue-img">
+                <img src="https://raw.githubusercontent.com/hjs07240411-design/10I/refs/heads/main/I-2.jpg" alt="프롤로그 2" class="prologue-img">
+                <img src="https://raw.githubusercontent.com/hjs07240411-design/10I/refs/heads/main/I-3.jpg" alt="프롤로그 3" class="prologue-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- 고스 상세 페이지 -->
+    <div id="goth-page" class="page">
+        <div class="container">
+            <button class="back-btn" onclick="showPage('main-page')">← 메인으로 돌아가기</button>
+            <div class="detail-wrapper">
+                <div class="detail-layout">
+                    <div class="detail-left">
+                        <div class="detail-img-container">
+                            <img src="https://raw.githubusercontent.com/hjs07240411-design/10J/refs/heads/main/J-1.jpg" alt="고스" class="detail-img">
+                        </div>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-header">
+                            <h2 class="detail-title">고스 (유여나)</h2>
+                        </div>
+                        <table class="profile-table">
+                            <tr>
+                                <th>성별</th>
+                                <td>여성</td>
+                            </tr>
+                            <tr>
+                                <th>나이</th>
+                                <td>20세 (444살이라는 설정을 사용 중)</td>
+                            </tr>
+                        </table>
+
+                        <div class="info-section">
+                            <div class="info-section-title">📜 설정</div>
+                            <p>본명은 유여나이며 엔지와 이사벨과 어울려 주기 위해 유령 코스튬을 뒤집어 쓰고 고스라는 가명을 사용 중이다.
+
+어린 시절 할로윈 데이 밤에 유령 코스프레 중 골목에서 우연찮게 엔지와 이사벨을 만나고 친해져 인간임을 속이고 만나는 중이다. 자신을 친구처럼 대해주는 엔지와 이사벨과 있으면 즐겁기에 마왕성 계획에 동참 중이다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <div class="shout-box">
+                    <div class="shout-text">"얘들아 너무 실례야!!!"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 엔지 상세 페이지 -->
+    <div id="angie-page" class="page">
+        <div class="container">
+            <button class="back-btn" onclick="showPage('main-page')">← 메인으로 돌아가기</button>
+            <div class="detail-wrapper">
+                <div class="detail-layout">
+                    <div class="detail-left">
+                        <div class="detail-img-container">
+                            <img src="https://raw.githubusercontent.com/hjs07240411-design/10C/refs/heads/main/C-4.jpg" alt="엔지" class="detail-img">
+                        </div>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-header">
+                            <h2 class="detail-title">엔지</h2>
+                        </div>
+                        <table class="profile-table">
+                            <tr>
+                                <th>성별</th>
+                                <td>여성</td>
+                            </tr>
+                            <tr>
+                                <th>나이</th>
+                                <td>죽은 지 200년 이상 (정확히 기억 못함)</td>
+                            </tr>
+                        </table>
+
+                        <div class="info-section">
+                            <div class="info-section-title">📜 설정</div>
+                            <p>좀비이다. 마왕성 계획에 동참 중이며 마왕은 자신이 될 것이라 한다.
+
+태양빛에 닿으면 죽을 정도는 아니지만 따가워서 아파한다. 체액이 보라색이며, 힘이 약하다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <div class="shout-box">
+                    <div class="shout-text">"으아아악!! 태양 너무 뜨거워!!!"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이사벨 상세 페이지 -->
+    <div id="isabelle-page" class="page">
+        <div class="container">
+            <button class="back-btn" onclick="showPage('main-page')">← 메인으로 돌아가기</button>
+            <div class="detail-wrapper">
+                <div class="detail-layout">
+                    <div class="detail-left">
+                        <div class="detail-img-container">
+                            <img src="https://raw.githubusercontent.com/hjs07240411-design/10E/refs/heads/main/E-4.jpg" alt="이사벨" class="detail-img">
+                        </div>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-header">
+                            <h2 class="detail-title">이사벨</h2>
+                        </div>
+                        <table class="profile-table">
+                            <tr>
+                                <th>성별</th>
+                                <td>여성</td>
+                            </tr>
+                            <tr>
+                                <th>나이</th>
+                                <td>222살</td>
+                            </tr>
+                        </table>
+
+                        <div class="info-section">
+                            <div class="info-section-title">📜 설정</div>
+                            <p>뱀파이어지만 피를 무서워해 토마토 주스를 좋아한다. 물론 영양을 위해 가끔씩은 피를 마셔야 하기에 동물 피라도 마셔왔다.
+
+엔지와 함께 마왕성 계획에 동참 중이며 자신이 마왕이 될 것이라 주장 중이다. 힘이 약하다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <div class="shout-box">
+                    <div class="shout-text">"마왕이 되는 것은 당연히 이몸이다!!!"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Demon King Castle Project. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -72,7 +72,7 @@
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2.2rem, 6vw, 3.5rem);
             font-weight: 900;
             background: linear-gradient(135deg, #ffffff 20%, #ff66a3 60%, #c055ff 100%);
             -webkit-background-clip: text;
@@ -309,7 +309,7 @@
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 3rem;
+            padding: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
             display: flex;
@@ -397,36 +397,40 @@
             white-space: pre-line;
         }
 
-        /* 임팩트 있고 커진 소리치는 대사 박스 */
+        /* 모바일 대응 대사 박스 및 텍스트 스타일 */
         .shout-box {
             width: 100%;
             background: linear-gradient(135deg, rgba(40, 15, 55, 0.95) 0%, rgba(20, 8, 30, 0.95) 100%);
             border: 2px solid var(--glow-red);
             border-radius: 12px;
-            padding: 1.8rem 2rem;
+            padding: 1.2rem 1rem;
             text-align: center;
             box-shadow: 0 0 25px rgba(255, 0, 85, 0.4), inset 0 0 20px rgba(157, 0, 255, 0.25);
             margin-top: 0.5rem;
         }
 
         .shout-text {
-            font-size: 2.3rem;
+            /* 모바일 및 데스크탑 크기 자동 맞춤 (최소 1.2rem ~ 최대 2.2rem) */
+            font-size: clamp(1.2rem, 4vw, 2.2rem);
             font-weight: 900;
             color: #ffffff;
             text-shadow: 0 0 12px var(--glow-red), 0 0 25px var(--glow-purple);
-            letter-spacing: 1.5px;
-            white-space: nowrap;
+            letter-spacing: 1px;
+            /* 텍스트가 잘리지 않고 모바일에서도 반응형으로 감싸지도록 조절 */
+            white-space: normal;
+            word-break: keep-all;
+            line-height: 1.4;
         }
 
         @media (max-width: 850px) {
-            h1 {
-                font-size: 2.5rem;
+            .container {
+                padding: 1.5rem 1rem 3rem;
+            }
+            .detail-wrapper {
+                padding: 1.5rem;
             }
             .detail-layout {
                 grid-template-columns: 1fr;
-            }
-            .shout-text {
-                font-size: 1.6rem;
             }
         }
     </style>
@@ -576,7 +580,7 @@
                     </div>
                 </div>
 
-                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <!-- 모바일 완벽 대응 대사 박스 -->
                 <div class="shout-box">
                     <div class="shout-text">"얘들아 너무 실례야!!!"</div>
                 </div>
@@ -619,7 +623,7 @@
                     </div>
                 </div>
 
-                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <!-- 모바일 완벽 대응 대사 박스 -->
                 <div class="shout-box">
                     <div class="shout-text">"으아아악!! 태양 너무 뜨거워!!!"</div>
                 </div>
@@ -662,7 +666,7 @@
                     </div>
                 </div>
 
-                <!-- 크게 키우고 느낌표를 더한 대사 박스 -->
+                <!-- 모바일 완벽 대응 대사 박스 -->
                 <div class="shout-box">
                     <div class="shout-text">"마왕이 되는 것은 당연히 이몸이다!!!"</div>
                 </div>
